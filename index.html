@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GD Master - グループディスカッション攻略</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #f6f8fc 0%, #e9f0f7 100%);
+            min-height: 100vh;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .phrase-card {
+            border-left: 4px solid #4F46E5;
+            background: #F3F4F6;
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .phrase-card:hover {
+            background: #E5E7EB;
+            transform: translateX(4px);
+        }
+
+        .situation {
+            color: #4F46E5;
+            font-weight: 500;
+        }
+
+        .step-list {
+            counter-reset: step;
+        }
+
+        .step-list li {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.5rem;
+            counter-increment: step;
+        }
+
+        .step-list li::before {
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #4F46E5;
+            color: white;
+            width: 1.8rem;
+            height: 1.8rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .download-btn {
+            background: #4F46E5;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: #4338CA;
+            transform: translateY(-2px);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a1c2c 0%, #222436 100%);
+                color: #e5e7eb;
+            }
+            
+            .card {
+                background: rgba(30, 32, 47, 0.95);
+            }
+
+            .phrase-card {
+                background: rgba(55, 57, 72, 0.5);
+            }
+
+            .phrase-card:hover {
+                background: rgba(55, 57, 72, 0.8);
+            }
+
+            select, input {
+                background-color: rgba(55, 57, 72, 0.8);
+                color: #e5e7eb;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-8 fade-in">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">GD Master</h1>
+            <p class="text-gray-600 dark:text-gray-400">効果的なグループディスカッションのために</p>
+        </header>
+
+        <div class="card p-6 mb-6 fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <select id="discussionType" class="col-span-1 p-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-600">
+                    <option value="problem-solving">課題解決型ディスカッション</option>
+                    <option value="selection">選択型ディスカッション</option>
+                    <option value="free-discussion">自由討論型ディスカッション</option>
+                    <option value="role-playing">ロールプレイ型ディスカッション</option>
+                    <option value="ideation">アイデア創出型</option>
+                    <option value="facilitation">ファシリテーション</option>
+                    <option value="timekeeper">タイムキーパー</option>
+                    <option value="secretary">書記</option>
+                    <option value="participants">他の参加者</option>
+                </select>
+                <button onclick="showContent()" class="col-span-1 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    攻略法を表示
+                </button>
+                <button onclick="showPhrases()" class="col-span-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                    フレーズ集
+                </button>
+                <button onclick="downloadManual()" class="col-span-1 download-btn px-6 py-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                    マニュアルDL
+                </button>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-3 dark:text-gray-200">音声設定</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label for="voiceSelect" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">声の種類:</label>
+                        <select id="voiceSelect" class="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600">
+                        </select>
+                    </div>
+                    <div>
+                        <label for="speedRange" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">スピード:</label>
+                        <input type="range" id="speedRange" min="0.5" max="2" step="0.1" value="1" class="w-full">
+                    </div>
+                    <div class="flex items-end">
+                        <button id="speakButton" onclick="toggleSpeech()" class="w-full bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            読み上げ
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="content" class="card p-6 mb-6 fade-in"></div>
+        <div id="phraseList" class="card p-6 fade-in" style="display: none;"></div>
+    </div>
+
+    <script>
+        const contents = {
+    "problem-solving": {
+        title: "課題解決型ディスカッション",
+        description: "具体的な問題に対する解決策を導き出す形式です。",
+        examples: [
+            "地方都市の人口減少問題について、具体的な解決策を提案してください",
+            "大学生の早期離職問題の解決策を検討してください",
+            "高齢者の買い物難民問題を解決するための具体的な施策を考えてください"
+        ],
+        steps: [
+            "問題の現状と課題を明確に把握する",
+            "課題の原因を多角的に分析する",
+            "可能な解決策を複数提案する",
+            "各解決策のメリット・デメリットを検討する",
+            "最適な解決策を選択し、実行計画を立てる"
+        ]
+    },
+    "selection": {
+        title: "選択型ディスカッション",
+        description: "複数の選択肢から最適な案を選ぶ形式です。",
+        examples: [
+            "新商品の販売チャネルとして、ECサイト展開と実店舗出店のどちらが適切か検討してください",
+            "社員研修の実施方法として、集合研修とオンライン研修のどちらを採用すべきか議論してください",
+            "新工場の建設地として、A市とB市のどちらが適切か判断してください"
+        ],
+        steps: [
+            "選択肢の内容を正確に理解する",
+            "評価基準を設定する",
+            "各選択肢のメリット・デメリットを分析する",
+            "設定した基準に基づいて比較評価を行う",
+            "最適な選択肢を決定し、その理由を明確に説明する"
+        ]
+    },
+    "free-discussion": {
+        title: "自由討論型ディスカッション",
+        description: "特定のテーマについて自由に意見を交換する形式です。",
+        examples: [
+            "今後の働き方について、リモートワークと従来型オフィスワークの在り方を議論してください",
+            "AI技術の発展が社会に与える影響について、様々な観点から議論してください",
+            "教育におけるICT活用の可能性と課題について、自由に意見を交換してください"
+        ],
+        steps: [
+            "討論テーマについて、自身の考えや経験を共有する",
+            "他者の意見に耳を傾け、その背景や理由を理解する",
+            "関連する話題や新たな視点を柔軟に取り入れる",
+            "議論を通じて得られた気づきや学びを整理する",
+            "異なる意見の共存も認めながら、議論から得られた示唆をまとめる"
+        ]
+    },
+    "role-playing": {
+        title: "ロールプレイ型ディスカッション",
+        description: "参加者がそれぞれ異なる役割や立場を演じながら議論を行う形式です。",
+        examples: [
+            "新規事業の立ち上げについて、営業部門・開発部門・財務部門それぞれの立場から検討してください",
+            "商店街活性化について、店舗経営者・地域住民・行政の立場から議論してください",
+            "新製品の開発方針について、メーカー・販売店・消費者の視点から検討してください"
+        ],
+        steps: [
+            "各自の役割や立場を理解し、その視点から課題を捉える",
+            "役割に応じた利害関係や制約条件を考慮しながら意見を述べる",
+            "異なる立場からの意見を調整し、合意点を探る",
+            "全体最適の視点から解決策を検討する",
+            "実行可能な結論を導き出し、各役割の協力体制を確認する"
+        ]
+    },
+    "ideation": {
+    title: "アイデア創出型ディスカッション",
+    description: "特定のテーマについて、自由な発想で新しいアイデアを生み出す形式です。",
+    examples: [
+        "未来の学校教育はどのようになっているか、アイデアを出し合ってください",
+        "高齢者が楽しめる新しい趣味や娯楽のアイデアを考えてください",
+        "環境に優しい新しい商品やサービスのアイデアを提案してください"
+    ],
+    steps: [
+        "テーマの背景や目的を共有する",
+        "ブレインストーミングでアイデアを自由に出し合う",
+        "出されたアイデアを整理・分類する",
+        "アイデアを組み合わせて発展させる",
+        "実現可能性の高いアイデアを選定し、具体化する"
+    ]
+},
+    "facilitation": {
+        title: "ファシリテーション",
+        description: "議論の進行役が参加者の意見を効果的に引き出し、建設的な結論に導く形式です。",
+        steps: [
+            "議論の目的と進め方を明確にする",
+            "参加者全員が発言しやすい環境を作る",
+            "議論の流れを整理し、論点を明確にする",
+            "建設的な合意形成を促進する",
+            "成果を確認し、次のアクションにつなげる"
+        ]
+    },
+    "timekeeper": {
+    title: "タイムキーパー",
+    description: "討議の時間管理を担当し、効率的な進行をサポートする役割です。",
+    steps: [
+        "タイムスケジュールの確認と共有",
+        "経過時間の定期的な告知",
+        "残り時間の適切な通知",
+        "時間超過の警告",
+        "各セクションの終了時間の調整"
+    ]
+    },
+    "secretary": {
+    title: "書記",
+    description: "議論の内容を記録し、重要なポイントを文書化する役割です。",
+    steps: [
+        "主要な意見や決定事項の記録",
+        "議論の流れの整理",
+        "重要なポイントのハイライト",
+        "合意事項の明確な記録",
+        "議事録の作成と共有"
+    ]
+    },
+    "participants": {
+    title: "他の参加者",
+    description: "積極的に議論に参加し、建設的な意見を提供する役割です。",
+    steps: [
+        "議題に関する事前準備",
+        "積極的な意見表明",
+        "他者の意見の傾聴",
+        "建設的な質問や提案",
+        "合意形成への協力"
+        ]
+    }
+};
+
+    const phrases = {
+            "problem-solving": [
+                {
+                    situation: "議論の開始時",
+                    phrase: "まず、この問題の本質を明確にしたいと思います。皆さんはどのように捉えていますか？",
+                    effect: "議論の方向性を定め、全員の認識を統一できます"
+                },
+                {
+                    situation: "問題点の整理時",
+                    phrase: "これまでの意見を整理すると、主な課題は〜と〜になると思うのですが、いかがでしょうか？",
+                    effect: "議論を整理し、次のステップに進むきっかけを作れます"
+                },
+                {
+                    situation: "解決策の提案時",
+                    phrase: "〜という課題に対して、具体的には〜という対策が有効だと考えます。その理由は〜です。",
+                    effect: "論理的な提案ができ、説得力が増します"
+                },
+                {
+                    situation: "意見の対立があった時",
+                    phrase: "AさんとBさんの意見には、どちらも重要な視点が含まれていると思います。これらを統合すると〜",
+                    effect: "建設的な議論を促進し、合意形成につながります"
+                },
+                {
+                    situation: "時間管理の提案時",
+                    phrase: "残り時間を考慮すると、ここからは具体的な解決策の検討に移りたいと思いますが、いかがでしょうか？",
+                    effect: "時間を意識した議論の進行ができます"
+                }
+            ],
+         "selection": [
+                {
+                    situation: "選択肢の分析時",
+                    phrase: "各選択肢を「実現可能性」「費用対効果」「リスク」の3つの観点から評価してみてはいかがでしょうか？",
+                    effect: "客観的な評価基準を設定し、議論を具体化できます"
+                },
+                {
+                    situation: "メリット・デメリットの議論時",
+                    phrase: "この選択肢のメリットとして〜が挙げられますが、一方で〜というデメリットも考慮する必要があります。",
+                    effect: "バランスの取れた分析ができます"
+                },
+                {
+                    situation: "意見の追加時",
+                    phrase: "先ほどの意見に補足させていただきたいのですが、〜という観点も重要かと思います。",
+                    effect: "議論を深めることができます"
+                },
+                {
+                    situation: "合意形成を図る時",
+                    phrase: "これまでの議論を踏まえると、〜という選択肢が最適だと考えられますが、皆さんのご意見はいかがでしょうか？",
+                    effect: "全員の合意を得やすくなります"
+                },
+                {
+                    situation: "優先順位をつける時",
+                    phrase: "複数の選択肢の中で、特に重要度が高いのは〜だと考えます。その理由は〜です。",
+                    effect: "選択肢の優先順位を明確にできます"
+                }
+            ],
+           "free-discussion": [
+    {
+        situation: "自分の意見を述べる時",
+        phrase: "私の経験から考えると、〜というところに注目すべきだと思います。",
+        effect: "個人の経験に基づく具体的な視点を提供できます"
+    },
+    {
+        situation: "他者の意見に関連付ける時",
+        phrase: "〜さんのご意見に関連して、別の角度から見ると〜という側面もあると思います。",
+        effect: "議論を発展させながら新たな視点を導入できます"
+    },
+    {
+        situation: "質問や確認をする時",
+        phrase: "〜というお考えの背景には、どのような経験や理由があるのでしょうか？",
+        effect: "相手の意見をより深く理解することができます"
+    },
+    {
+        situation: "議論を深める時",
+        phrase: "今の話題に関連して、〜という観点からも考察してみてはいかがでしょうか？",
+        effect: "議論の範囲を適切に広げることができます"
+    },
+    {
+        situation: "気づきを共有する時",
+        phrase: "この議論を通じて、私は〜という新たな気づきを得ました。",
+        effect: "議論から得られた学びを共有できます"
+    },
+    {
+        situation: "意見の違いを認める時",
+        phrase: "確かに〜という考え方と〜という考え方は、どちらも重要な視点だと思います。",
+        effect: "異なる意見の共存を認め、建設的な議論を促進できます"
+    },
+    {
+        situation: "議論をまとめる時",
+        phrase: "これまでの議論から、〜という点で共通認識が得られ、〜という点では様々な考え方があることが分かりました。",
+        effect: "議論の成果を整理し、共有することができます"
+    }
+],
+"role-playing": [
+                {
+                    situation: "役割の立場から発言する時",
+                    phrase: "〜の立場から申し上げますと、最も重要なのは〜という点です。",
+                    effect: "役割に応じた視点を明確に示せます"
+                },
+                {
+                    situation: "他の役割との協力を提案する時",
+                    phrase: "私たち〜部門と、〜部門が協力することで、より効果的な解決が可能だと考えます。",
+                    effect: "部門間の連携を促進できます"
+                },
+                {
+                    situation: "意見の対立を解消する時",
+                    phrase: "確かに〜という懸念は理解できます。そこで、〜という方法で両立を図ってはいかがでしょうか？",
+                    effect: "建設的な妥協案を提示できます"
+                },
+                {
+                    situation: "全体最適の視点を示す時",
+                    phrase: "各部門の視点も重要ですが、会社全体として見た場合、〜という方向性が望ましいと考えます。",
+                    effect: "全体最適の視点を共有できます"
+                },
+                {
+                    situation: "実行可能性を検討する時",
+                    phrase: "私の部門では〜という制約がありますが、〜という方法で対応可能です。",
+                    effect: "現実的な解決策の検討ができます"
+                }
+            ],
+
+            "ideation": [
+        {
+            situation: "新しいアイデアを提案する時",
+            phrase: "これまでにない視点として、〜というアプローチはいかがでしょうか？",
+            effect: "革新的なアイデアを導入できます"
+        },
+        {
+            situation: "アイデアを発展させる時",
+            phrase: "その案に付け加えて、〜という要素を組み合わせることで、さらなる価値が生まれると考えます。",
+            effect: "既存のアイデアを進化させられます"
+        },
+        {
+            situation: "実現可能性を検討する時",
+            phrase: "このアイデアを実現するために必要な要素として、〜が考えられます。",
+            effect: "具体的な実行計画の検討ができます"
+        },
+        {
+            situation: "アイデアを評価する時",
+            phrase: "このアイデアの強みは〜という点で、改善が必要な部分は〜だと考えます。",
+            effect: "客観的な評価ができます"
+        },
+        {
+            situation: "アイデアを統合する時",
+            phrase: "AさんとBさんのアイデアを組み合わせると、〜というさらに良い解決策になりそうです。",
+            effect: "複数のアイデアから最適解を導き出せます"
+        }
+    ],
+            "facilitation": [
+        {
+            situation: "事前準備フェーズ",
+            phrase: "議題と目的の明確化を行いましょう。まず、本日の到達点について合意を取りたいと思います。",
+            effect: "会議の方向性と目標を明確にし、効率的な進行が可能になります"
+        },
+        {
+            situation: "環境設定時",
+            phrase: "みなさんが意見を出しやすい環境を整えたいと思います。座席配置や必要な道具の確認をさせてください。",
+            effect: "参加者が快適に議論に参加できる環境を整えることができます"
+        },
+        {
+            situation: "導入時",
+            phrase: "本日の目的と進め方について共有させていただきます。その後、簡単なアイスブレイクを行いたいと思います。",
+            effect: "参加者の緊張をほぐし、活発な議論の土台を作ることができます"
+        },
+        {
+            situation: "本討議開始時",
+            phrase: "それでは本題に入りたいと思います。まず、このテーマについて皆さんのお考えをお聞かせください。",
+            effect: "多様な視点からの意見を収集し、議論の糸口を見つけることができます"
+        },
+        {
+            situation: "意見集約時",
+            phrase: "ここまでの議論を整理させていただきます。主な意見として次のようなものが出ていますが、補足はありますか？",
+            effect: "出された意見を整理し、全員の認識を統一することができます"
+        },
+        {
+            situation: "議論停滞時",
+            phrase: "少し視点を変えて考えてみましょう。もし○○だとしたら、どのような対応が考えられますか？",
+            effect: "新しい視点を導入することで、議論を活性化させることができます"
+        },
+        {
+            situation: "意見対立発生時",
+            phrase: "双方の意見には、それぞれ重要な指摘が含まれていますね。共通点を探りながら、建設的な方向性を見出していきましょう。",
+            effect: "対立を建設的な議論に転換し、より良い解決策を見出すことができます"
+        },
+        {
+            situation: "合意形成時",
+            phrase: "これまでの議論を踏まえて、具体的なアクションプランを決めていきたいと思います。優先順位をつけながら整理しましょう。",
+            effect: "議論を具体的な行動計画に落とし込むことができます"
+        },
+        {
+            situation: "振り返り時",
+            phrase: "本日の議論を振り返って、特に重要だと感じた点や、さらなる検討が必要な点について共有していただけますか？",
+            effect: "議論の成果を確認し、次のステップへの課題を明確にできます"
+        }
+    ],
+    "timekeeper": [
+        {
+            "situation": "議題が盛り上がり、時間を大幅に使い始めたとき",
+            "phrase": "『この議題にあと3分割きましょう。その後、次に移ります』",
+            "effect": "議論の焦点が逸れず、全ての議題に必要な時間が割り当てられる"
+        },
+        {
+            "situation": "残り時間が5分となり、議題が終わっていないとき",
+            "phrase": "『残り5分ですので、重要な結論に集中しましょう』",
+            "effect": "議論が結論に向かって集約され、時間内に結果が出やすくなる"
+        },
+        {
+            "situation": "討議時間が終了した際に、まだ意見が交わされているとき",
+            "phrase": "『お時間となりましたので、こちらで締めましょう。最終確認として要点をまとめます』",
+            "effect": "タイムキーパーが締めることで、ディスカッションが円滑に終了する"
+        }
+     ],
+    "secretary": [
+        {
+            "situation": "複数の意見が出て、内容が複雑化してきたとき",
+            "phrase": "『ここで一旦、主要なポイントを整理します。〇〇さんの意見は…』",
+            "effect": "書記が意見を整理することで、議論の流れが明確になり、全員が同じ理解を持つことができる"
+        },
+        {
+            "situation": "重要な決定事項が出たとき",
+            "phrase": "『ここまでの合意として、○○に決定しました。全員の同意が確認されました』と明確に記録",
+            "effect": "合意事項が明確化され、後で再確認する際の指標となる"
+        },
+        {
+            "situation": "議論が終わり、結果を全員で振り返るとき",
+            "phrase": "『本日の決定事項は以下の通りです』と要点を伝達",
+            "effect": "議論の成果が全員に共有され、次のアクションが取りやすくなる"
+        }
+    ],
+    "participants": [
+        {
+            "situation": "別の参加者が意見を述べ、異なる視点が出てきたとき",
+            "phrase": "『その視点も考慮すると、私としては…』と自分の意見に新たな視点を加える",
+            "effect": "他者の意見を活かしつつ、自分の視点を発展させることで、議論が多角的に進む"
+        },
+        {
+            "situation": "意見が分かれ、合意形成が難しくなってきたとき",
+            "phrase": "『一度、共通点に戻って整理しましょう』と調整役を提案",
+            "effect": "共通点を見つけることで、参加者同士の歩み寄りが促され、合意形成がしやすくなる"
+        },
+        {
+            "situation": "議論がスムーズに進んでいるが、掘り下げが足りないと感じたとき",
+            "phrase": "『もう少しこの点について掘り下げませんか？』と建設的な問いを投げかける",
+            "effect": "議論がより深まり、細部まで検討されることで、質の高い結論が得られる"
+        }
+    ]
+
+ };
+
+        let speaking = false;
+        let speechSynthesis = window.speechSynthesis;
+        const speakButton = document.getElementById('speakButton');
+
+        function showContent() {
+    const discussionType = document.getElementById("discussionType").value;
+    const content = contents[discussionType];
+    
+    let html = `
+        <h2 class="text-2xl font-bold mb-4 dark:text-gray-200">${content.title}</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">${content.description}</p>
+        
+        <h3 class="text-xl font-semibold mb-3 dark:text-gray-300">効果的な進め方</h3>
+        <ol class="step-list mb-6">
+            ${content.steps.map(step => `<li class="text-gray-700 dark:text-gray-300">${step}</li>`).join('')}
+        </ol>
+    `;
+
+    // 例が存在する場合のみ表示
+    if (content.examples) {
+        html += `
+            <h3 class="text-xl font-semibold mb-3 dark:text-gray-300">ディスカッション例</h3>
+            <ul class="list-disc pl-5 mb-6">
+                ${content.examples.map(example => `<li class="text-gray-700 dark:text-gray-300 mb-2">${example}</li>`).join('')}
+            </ul>
+        `;
+    }
+    
+    document.getElementById("content").innerHTML = html;
+    document.getElementById("phraseList").style.display = "none";
+    document.getElementById("content").style.display = "block";
+}
+
+        function showPhrases() {
+            const discussionType = document.getElementById("discussionType").value;
+            const phraseSet = phrases[discussionType];
+            
+            document.getElementById("phraseList").innerHTML = `
+                <h2 class="text-2xl font-bold mb-4 dark:text-gray-200">効果的なフレーズ集</h2>
+                ${phraseSet.map(item => `
+                    <div class="phrase-card">
+                        <div class="situation mb-2">${item.situation}</div>
+                        <div class="phrase text-gray-800 dark:text-gray-200 font-medium mb-2">${item.phrase}</div>
+                        <div class="effect text-gray-600 dark:text-gray-400 text-sm">${item.effect}</div>
+                    </div>
+                `).join('')}
+            `;
+            
+            document.getElementById("content").style.display = "none";
+            document.getElementById("phraseList").style.display = "block";
+        }
+
+        function downloadManual() {
+    const discussionType = document.getElementById("discussionType").value;
+    const content = contents[discussionType] || {};
+    const phraseSet = phrases[discussionType] || [];
+
+    let text = `# ${content.title || "グループディスカッションマニュアル"}\n\n`;
+    text += `${content.description || "こちらはグループディスカッションに役立つマニュアルです。"}\n\n`;
+
+    // Add Examples Section (if available)
+    if (content.examples && content.examples.length > 0) {
+        text += `## 具体的な例\n\n`;
+        content.examples.forEach((example, index) => {
+            text += `${index + 1}. ${example}\n`;
+        });
+    } else {
+        text += `## 具体的な例\n\n特定のディスカッションタイプの例はありません。\n`;
+    }
+
+    // Add Steps Section (if available)
+    if (content.steps && content.steps.length > 0) {
+        text += `\n## 効果的な進め方\n\n`;
+        content.steps.forEach((step, index) => {
+            text += `${index + 1}. ${step}\n`;
+        });
+    } else {
+        text += `\n## 効果的な進め方\n\n一般的なディスカッションの進め方を使用してください。\n`;
+    }
+
+    // Add Phrases Section
+    text += `\n## 効果的なフレーズ集\n\n`;
+    if (phraseSet.length > 0) {
+        phraseSet.forEach(item => {
+            text += `### ${item.situation}\n`;
+            text += `フレーズ: ${item.phrase}\n`;
+            text += `効果: ${item.effect}\n\n`;
+        });
+    } else {
+        text += "フレーズ集はありません。\n";
+    }
+
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `gd_master_${discussionType || "general"}_manual.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+}
+
+
+
+        // Speech synthesis setup
+        function populateVoiceList() {
+            const voices = speechSynthesis.getVoices();
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
+            
+            voices.forEach((voice, index) => {
+                if (voice.lang.startsWith('ja')) {
+                    const option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.value = index;
+                    voiceSelect.appendChild(option);
+                }
+            });
+        }
+
+        speechSynthesis.onvoiceschanged = populateVoiceList;
+        populateVoiceList();
+
+        function toggleSpeech() {
+    if (speaking) {
+        // 読み上げ停止
+        speechSynthesis.cancel();
+        speaking = false;
+        speakButton.textContent = '読み上げ';
+        speakButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+        speakButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+    } else {
+        const discussionType = document.getElementById("discussionType").value;
+        let text = '';
+
+        // コンテンツの表示状態をチェックし、読み上げるテキストを生成
+        if (document.getElementById("content").style.display !== "none") {
+            // 攻略法の読み上げ
+            const content = contents[discussionType];
+            if (content) {
+                text = `${content.title}。${content.description}。効果的な進め方。${content.steps.join('。')}。`;
+
+                // 具体的な例のセクションを追加
+                if (content.examples && content.examples.length > 0) {
+                    text += `具体的な例。`;
+                    content.examples.forEach((example, index) => {
+                        text += `例 ${index + 1}：${example}。`;
+                    });
+                }
+            } else {
+                text = '攻略法のデータがありません。';
+            }
+        } else if (document.getElementById("phraseList").style.display !== "none") {
+            // フレーズ集の読み上げ
+            const phraseSet = phrases[discussionType];
+            if (phraseSet) {
+                text = '効果的なフレーズ集。';
+                phraseSet.forEach(item => {
+                    text += `${item.situation}の場合。フレーズ：${item.phrase}。効果：${item.effect}。`;
+                });
+            } else {
+                text = 'フレーズ集のデータがありません。';
+            }
+        }
+
+        if (text) {
+            // 音声の読み上げ準備
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voiceSelect = document.getElementById('voiceSelect');
+            const voices = speechSynthesis.getVoices();
+
+            // 音声が非同期にロードされるため、待機してから実行
+            if (voices.length > 0) {
+                utterance.voice = voices[voiceSelect.value];
+                utterance.rate = parseFloat(document.getElementById('speedRange').value);
+                startSpeaking(utterance);
+            } else {
+                // 音声がロードされていない場合、ロード後に開始
+                speechSynthesis.onvoiceschanged = () => {
+                    utterance.voice = speechSynthesis.getVoices()[voiceSelect.value];
+                    startSpeaking(utterance);
+                };
+            }
+        }
+    }
+}
+
+function startSpeaking(utterance) {
+    // 読み上げ終了時の処理
+    utterance.onend = function () {
+        speaking = false;
+        speakButton.textContent = '読み上げ';
+        speakButton.classList.remove('bg-red-600', 'hover:bg-red-700');
+        speakButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+    };
+
+    speaking = true;
+    speakButton.textContent = '停止';
+    speakButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+    speakButton.classList.add('bg-red-600', 'hover:bg-red-700');
+
+    // 読み上げ開始
+    speechSynthesis.speak(utterance);
+}
+
+        // Initialize content on page load
+        showContent();
+    </script>
+</body>
+</html>
