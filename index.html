@@ -126,27 +126,30 @@
         </header>
 
         <div class="card p-6 mb-6 fade-in">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <select id="discussionType" class="col-span-1 p-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-600">
-                    <option value="problem-solving">課題解決型ディスカッション</option>
-                    <option value="selection">選択型ディスカッション</option>
-                    <option value="free-discussion">自由討論型ディスカッション</option>
-                    <option value="role-playing">ロールプレイ型ディスカッション</option>
-                    <option value="ideation">アイデア創出型</option>
-                    <option value="facilitation">ファシリテーション</option>
-                    <option value="timekeeper">タイムキーパー</option>
-                    <option value="secretary">書記</option>
-                    <option value="participants">他の参加者</option>
-                </select>
-                <button onclick="showContent()" class="col-span-1 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                    攻略法を表示
-                </button>
-                <button onclick="showPhrases()" class="col-span-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
-                    フレーズ集
-                </button>
-                <button onclick="downloadManual()" class="col-span-1 download-btn px-6 py-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                    マニュアルDL
-                </button>
+            <div class="card p-6 mb-6 fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <select id="discussionType" class="col-span-1 p-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:border-gray-600">
+                        <option value="before-discussion">グループディスカッションを始める前に</option>
+                        <option value="problem-solving">課題解決型ディスカッション</option>
+                        <option value="selection">選択型ディスカッション</option>
+                        <option value="free-discussion">自由討論型ディスカッション</option>
+                        <option value="role-playing">ロールプレイ型ディスカッション</option>
+                        <option value="ideation">アイデア創出型</option>
+                        <option value="facilitation">ファシリテーション</option>
+                        <option value="timekeeper">タイムキーパー</option>
+                        <option value="secretary">書記</option>
+                        <option value="participants">他の参加者</option>
+                    </select>
+                    <button onclick="showContent()" class="col-span-1 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        攻略法を表示（左の項目を選択してクリック）
+                    </button>
+                    <button onclick="showPhrases()" class="col-span-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                        選択項目のフレーズ集
+                    </button>
+                    <button onclick="downloadManual()" class="col-span-1 download-btn px-6 py-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        選択項目の対応マニュアルDL
+                    </button>
+                </div>
             </div>
 
             <div class="mb-6">
@@ -176,6 +179,22 @@
 
     <script>
         const contents = {
+            "before-discussion": {
+        title: "グループディスカッションの基礎知識",
+        description: "グループディスカッションの目的、評価ポイント、準備方法について解説します。",
+        steps: [
+            "1. 基本的な目的：4〜8名程度のグループで30〜60分の議論を行い、応募者の能力を多面的に評価します。",
+            "2. 評価のポイント：論理的思考力、コミュニケーション能力、リーダーシップ、協調性が評価されます。",
+            "3. 事前準備：時事問題の理解、企業研究、基本的なディスカッションスキルの習得が重要です。",
+            "4. 注意点：独断的な態度を避け、建設的な議論を心がけ、時間配分を意識します。",
+            "5. 基本的な流れ：議題確認→自己紹介→進め方確認→本討議→まとめの順で進行します。"
+        ],
+        examples: [
+            "評価のポイント例：問題分析力、解決策の提案力、発言の明確さ、傾聴力",
+            "準備すべき項目例：企業の価値観や課題の把握、タイムマネジメントの意識付け",
+            "避けるべき行動例：一人で話しすぎる、消極的な態度、他者の意見を否定する"
+        ]
+    },
     "problem-solving": {
         title: "課題解決型ディスカッション",
         description: "具体的な問題に対する解決策を導き出す形式です。",
@@ -303,7 +322,54 @@
 };
 
     const phrases = {
-            "problem-solving": [
+        "before-discussion": [
+       {
+      situation: "自己紹介の提案時",
+      phrase: "それでは、開始の前に、簡単な自己紹介をしていきませんか？ 私から始めさせていただきます。私は山田と申します。趣味は読書で、特に歴史小説が好きです。皆さんもご自身の趣味や関心事なども含めて、お話しいただけると嬉しいです。",
+      effect: "具体例を示すことで、他の参加者も自己紹介の内容をイメージしやすくなり、話しやすくなります"
+    },
+    {
+      situation: "自己紹介の補助",
+      phrase: "自己紹介は、お名前に加えて、趣味や最近興味があることなど、どんなことでも構いません。リラックスして話していきましよう。",
+      effect: "自己紹介の内容例を示すことで、参加者の不安を軽減し、自己開示を促します"
+    },
+    {
+      situation: "自己紹介のフォローアップ。この会話は、周りの状況をみて必要に応じて話す。出しゃばりすぎないように注意。",
+      phrase: "ありがとうございます。○○さんは□□に興味があるとのことですが、私も同じ趣味です。では、次の方、お願いできますでしょうか？",
+      effect: "共通点を見つけて言及することで、親近感を生み出し、次の方への自然な流れを作ります"
+    },
+    {
+      situation: "アイスブレイク",
+      phrase: "グループディスカッションは私も初めての経験になりますが、皆さんと一緒に良い議論ができればと思います",
+      effect: "緊張感を和らげ、親近感を生み出せます"
+    },
+    {
+      situation: "ディスカッション開始時",
+      phrase: "まずは本日の議論の進め方について確認させていただきたいのですが、よろしいでしょうか？",
+      effect: "議論の枠組みを設定し、全員の理解を統一できます"
+    },
+    {
+      situation: "役割決定時",
+      phrase: "私がタイムキーパーを担当させていただきますが、皆さまいかがでしょうか？",
+      effect: "積極的な姿勢を示しつつ、チームへの貢献を表明できます"
+    },
+    {
+      situation: "話題提供",
+      phrase: "皆さんは、このテーマについてどのようなご意見をお持ちでしょうか？",
+      effect: "参加者の発言を促し、多様な視点を引き出せます"
+    },
+    {
+      situation: "和やかな雰囲気作り",
+      phrase: "緊張されている方もいらっしゃるかもしれませんが、リラックスして臨みましょう",
+      effect: "参加者の心理的安全性を確保できます"
+    },
+    {
+      situation: "目的の共有",
+      phrase: "本日は○○というテーマについて、皆さんと建設的な意見交換ができればと思います",
+      effect: "議論の方向性を明確にし、参加者の意識を統一できます"
+    }
+  ],
+        "problem-solving": [
                 {
                     situation: "議論の開始時",
                     phrase: "まず、この問題の本質を明確にしたいと思います。皆さんはどのように捉えていますか？",
@@ -567,7 +633,7 @@
             ${content.steps.map(step => `<li class="text-gray-700 dark:text-gray-300">${step}</li>`).join('')}
         </ol>
     `;
-
+    
     // 例が存在する場合のみ表示
     if (content.examples) {
         html += `
@@ -583,6 +649,28 @@
     document.getElementById("content").style.display = "block";
 }
 
+// 既存のフレーズ表示関数は維持
+function showPhrases() {
+    const discussionType = document.getElementById("discussionType").value;
+    const phraseList = phrases[discussionType];
+    
+    let html = `
+        <h2 class="text-2xl font-bold mb-4 dark:text-gray-200">使えるフレーズ集</h2>
+        <div class="space-y-4">
+            ${phraseList.map(phrase => `
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                    <p class="font-bold text-gray-700 dark:text-gray-300">【${phrase.situation}】</p>
+                    <p class="text-indigo-600 dark:text-indigo-400 mt-2">${phrase.phrase}</p>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1 text-sm">効果：${phrase.effect}</p>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    
+    document.getElementById("phraseList").innerHTML = html;
+    document.getElementById("content").style.display = "none";
+    document.getElementById("phraseList").style.display = "block";
+}
         function showPhrases() {
             const discussionType = document.getElementById("discussionType").value;
             const phraseSet = phrases[discussionType];
