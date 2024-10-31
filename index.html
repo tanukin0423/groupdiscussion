@@ -846,6 +846,95 @@ function startSpeaking(utterance) {
 
         // Initialize content on page load
         showContent();
+    // グローバル変数の追加（既存のspeaking変数と区別するため）
+let manualSpeaking = false;
+const manualSpeechText = `
+このプログラムは、グループディスカッションの攻略法をマスターするためのツールです。
+画面上部のセレクトボックスから、学びたいディスカッションの種類を選択できます。
+表示される内容は、基礎知識、課題解決型、選択型、自由討論型、ロールプレイ型、アイデア創出型などです。
+また、各ディスカッションタイプごとに、使えるフレーズ集も用意しています。
+
+画面には2つのボタンがあります：
+1. 「攻略法を見る」ボタン - 各ディスカッションタイプの基本的な進め方や例を表示します。
+2. 「フレーズ集を見る」ボタン - 実践で使える具体的なフレーズと、その効果を表示します。
+
+さらに、表示された内容は音声で読み上げることができます。
+読み上げ速度は、スライダーで調整可能です。
+また、内容をテキストファイルとしてダウンロードすることもできます。
+`;
+
+// 新しい操作説明用の音声コントロールボタンのHTML
+const manualControlHtml = `
+<div class="manual-controls mb-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+    <h3 class="text-lg font-semibold mb-2 dark:text-gray-200">使い方の説明</h3>
+    <button id="manualSpeakButton" 
+            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+        説明を読み上げる
+    </button>
+</div>
+`;
+
+// 新しい音声制御機能
+function toggleManualSpeech() {
+    if (manualSpeaking) {
+        speechSynthesis.cancel();
+        manualSpeaking = false;
+        updateManualButton(false);
+    } else {
+        const utterance = new SpeechSynthesisUtterance(manualSpeechText);
+        const voiceSelect = document.getElementById('voiceSelect');
+        const voices = speechSynthesis.getVoices();
+        
+        if (voices.length > 0) {
+            utterance.voice = voices[voiceSelect.value];
+            utterance.rate = parseFloat(document.getElementById('speedRange').value);
+            startManualSpeaking(utterance);
+        } else {
+            speechSynthesis.onvoiceschanged = () => {
+                utterance.voice = speechSynthesis.getVoices()[voiceSelect.value];
+                startManualSpeaking(utterance);
+            };
+        }
+    }
+}
+
+function startManualSpeaking(utterance) {
+    utterance.onend = function() {
+        manualSpeaking = false;
+        updateManualButton(false);
+    };
+    
+    manualSpeaking = true;
+    updateManualButton(true);
+    speechSynthesis.speak(utterance);
+}
+
+function updateManualButton(isSpeaking) {
+    const button = document.getElementById('manualSpeakButton');
+    if (isSpeaking) {
+        button.textContent = '説明を停止';
+        button.classList.remove('bg-green-600', 'hover:bg-green-700');
+        button.classList.add('bg-red-600', 'hover:bg-red-700');
+    } else {
+        button.textContent = '説明を読み上げる';
+        button.classList.remove('bg-red-600', 'hover:bg-red-700');
+        button.classList.add('bg-green-600', 'hover:bg-green-700');
+    }
+}
+
+// DOMContentLoadedイベントリスナーを追加
+document.addEventListener('DOMContentLoaded', function() {
+    // コントロール要素の追加
+    const controlsContainer = document.createElement('div');
+    controlsContainer.innerHTML = manualControlHtml;
+    
+    // 既存のコンテンツの前に挿入
+    const contentElement = document.getElementById('content');
+    contentElement.parentNode.insertBefore(controlsContainer, contentElement);
+    
+    // イベントリスナーの設定
+    document.getElementById('manualSpeakButton').addEventListener('click', toggleManualSpeech);
+});
     </script>
 </body>
 </html>
